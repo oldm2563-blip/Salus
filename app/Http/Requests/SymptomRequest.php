@@ -22,13 +22,25 @@ class SymptomRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'name' => 'required|max:100',
-            'severity' => 'required|in:mild,moderate,severe',
-            'description',
-            'date_recorded' => 'date|required',
-            'notes' => 'array'
-        ];
+        if ($this->isMethod('put') || $this->isMethod('patch')) {
+            return [
+                'name' => 'sometimes|string|max:100',
+                'severity' => 'sometimes|in:mild,moderate,severe',
+                'description',
+                'date_recorded' => 'date|sometimes',
+                'notes' => 'array'
+            ];
+        }
+        if($this->isMethod('post')){
+            return [
+                'name' => 'required|max:100',
+                'severity' => 'required|in:mild,moderate,severe',
+                'description',
+                'date_recorded' => 'date|required',
+                'notes' => 'array'
+            ];
+        }
+        
     }
 
     public function messages()
