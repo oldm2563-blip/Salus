@@ -47,4 +47,16 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function symptoms(){
+        return $this->hasMany(Symptom::class, 'user_id');
+    }
+
+    public function appointments(){
+        return $this->hasMany(Appointment::class, 'user_id');
+    }
+
+    public function responses(){
+        return $this->hasMany(Ai_Respond::class, 'user_id');
+    }
 }
