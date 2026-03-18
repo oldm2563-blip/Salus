@@ -17,7 +17,7 @@ return new class extends Migration
             $table->enum('severity', ['mild', 'moderate', 'severe']);
             $table->text('description')->nullable();
             $table->date('date_recorded');
-            $table->json('notes');
+            $table->json('notes')->nullable();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });
