@@ -67,17 +67,17 @@ class RespondController extends Controller
     //     ]);
     // }
 
-    // #[OA\Post(
-    //     path: '/ai/health-advice',
-    //     summary: 'Get ai Health advice',
-    //     security: [['sanctum' => []]],
-    //     tags: ['Symptoms'],
-    //     responses: [
-    //         new OA\Response(response: 200, description: 'List of user symptoms'),
-    //         new OA\Response(response: 401, description: 'Unauthenticated'),
-    //         new OA\Response(response: 404, description: 'Symptoms not found'),
-    //     ]
-    // )]
+    #[OA\Post(
+        path: '/ai/health-advice',
+        summary: 'Get ai Health advice',
+        security: [['sanctum' => []]],
+        tags: ['AI'],
+        responses: [
+            new OA\Response(response: 200, description: 'List of user symptoms'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 404, description: 'Symptoms not found'),
+        ]
+    )]
     public function ai_respond()
     {
         $symptom = auth()->user()->symptoms()->latest()->first();
@@ -89,18 +89,18 @@ class RespondController extends Controller
 
     }
 
-    // #[OA\Get(
-    //     path: '/ai/history',
-    //     summary: 'retrieve advice history',
-    //     security: [['sanctum' => []]],
-    //     tags: ['Symptoms'],
-    //     responses: [
-    //         new OA\Response(response: 200, description: 'List of user symptoms'),
-    //         new OA\Response(response: 401, description: 'Unauthenticated'),
-    //         new OA\Response(response: 404, description: 'Symptoms not found'),
-    //     ]
-    // )]
-    public function last_advice()
+    #[OA\Get(
+        path: '/ai/last-advice',
+        summary: 'retrieve The latest advice',
+        security: [['sanctum' => []]],
+        tags: ['AI'],
+        responses: [
+            new OA\Response(response: 200, description: 'List of user symptoms'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 404, description: 'Symptoms not found'),
+        ]
+    )]
+    public function latest_advice()
     {
         $advices = auth()->user()->responses()->latest()->first();
         return response()->json([
@@ -110,17 +110,17 @@ class RespondController extends Controller
         ]);
     }
 
-    // #[OA\Get(
-    //     path: '/ai/history',
-    //     summary: 'Get all symptoms for the authenticated user',
-    //     security: [['sanctum' => []]],
-    //     tags: ['Symptoms'],
-    //     responses: [
-    //         new OA\Response(response: 200, description: 'List of user symptoms'),
-    //         new OA\Response(response: 401, description: 'Unauthenticated'),
-    //         new OA\Response(response: 404, description: 'Symptoms not found'),
-    //     ]
-    // )]
+    #[OA\Get(
+        path: '/ai/history',
+        summary: 'Get The advice history',
+        security: [['sanctum' => []]],
+        tags: ['AI'],
+        responses: [
+            new OA\Response(response: 200, description: 'List of user symptoms'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+            new OA\Response(response: 404, description: 'Symptoms not found'),
+        ]
+    )]
     public function history()
     {
         $advices = auth()->user()->responses()->latest()->get();
