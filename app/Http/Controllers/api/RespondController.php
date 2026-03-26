@@ -1,67 +1,126 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Ai_Respond;
-use Carbon\Carbon;
+use App\Jobs\Aijob;
+use OpenApi\Attributes as OA;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class RespondController extends Controller
 {
+    // public function ai_respond()
+    // {
+    //     $now = Carbon::now();
+    //     $symptoms = auth()->user()->symptoms()->latest()->first();
+        
+    //     if (!$symptoms) {
+    //         return response()->json([
+    //             "success" => false,
+    //             "message" => "No symptoms found"
+    //         ], 404);
+    //     }
+
+    //     $prompt = "
+    //     You are a helpful health assistant.
+
+    //     Name: {$symptoms->name}
+    //     Description: {$symptoms->description}
+    //     Severity: {$symptoms->severity}
+    //     Notes: {$symptoms->notes}
+
+    //     Provide general wellness advice in a friendly tone.
+    //     Do NOT provide medical diagnosis or prescriptions.
+    //     Limit response to 50 words.";
+
+    //     $respond = Http::withHeaders([
+    //             'Content-Type' => 'application/json',
+    //         ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" . config('services.gemini.key') , [
+    //             "contents" => [
+    //                 [
+    //                     "parts" => [
+    //                         [
+    //                             "text" => $prompt
+    //                         ]
+    //                     ]
+    //                 ]
+    //             ]
+    //         ]);
+    //         if($respond->failed()){
+    //             return[
+    //                 'error' => 'There Was A problem With the AI'
+    //             ];
+    //         }
+    //         $output = $respond->json()['candidates'][0]['content']['parts'][0]['text'];
+
+    //     Ai_Respond::create([
+    //         'response' => $output,
+    //         'generated_at' => $now,
+    //         'user_id' => auth()->id()
+    //     ]);
+
+    //     return response()->json([
+    //         "success" => true,
+    //         "ai_response" => $output,
+    //         "generated_at" => $now
+    //     ]);
+    // }
+
+    // #[OA\Post(
+    //     path: '/ai/health-advice',
+    //     summary: 'Get ai Health advice',
+    //     security: [['sanctum' => []]],
+    //     tags: ['Symptoms'],
+    //     responses: [
+    //         new OA\Response(response: 200, description: 'List of user symptoms'),
+    //         new OA\Response(response: 401, description: 'Unauthenticated'),
+    //         new OA\Response(response: 404, description: 'Symptoms not found'),
+    //     ]
+    // )]
     public function ai_respond()
     {
-        $now = Carbon::now();
-        $Symptom = auth()->user()->symptoms()->take(3)->pluck('name')->implode(', ');
-        
-        $prompt = "
-        You are a helpful health assistant.
-
-        Symptoms {$Symptom}
-        
-        Provide general wellness advice.
-        Do not give medical diagnosis.
-        in 50 words";
-
-        $respond = Http::withHeaders([
-            'Content-Type' => 'application/json',
-        ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" . env('GEMINI_API_KEY') , [
-            "contents" => [
-                [
-                    "parts" => [
-                        [
-                            "text" => $prompt
-                        ]
-                    ]
-                ]
-            ]
-        ]);
-        if($respond->successful()){
-            $output = $respond->json()['candidates'][0]['content']['parts'][0]['text'];
-        }
-        else{
-            return response()->json([
-            "success" => false,
-            "message" => "there was a problem with the ai"
-        ]);
-        }
-
-        Ai_Respond::create([
-            'response' => $output,
-            'generated_at' => $now,
-            'user_id' => auth()->id()
+        $symptom = auth()->user()->symptoms()->latest()->first();
+        $userId = auth()->id();
+        Aijob::dispatch($symptom->id, $userId);  
+        return response()->json([
+            "advice" => "generating"
         ]);
 
+    }
+
+    // #[OA\Get(
+    //     path: '/ai/history',
+    //     summary: 'retrieve advice history',
+    //     security: [['sanctum' => []]],
+    //     tags: ['Symptoms'],
+    //     responses: [
+    //         new OA\Response(response: 200, description: 'List of user symptoms'),
+    //         new OA\Response(response: 401, description: 'Unauthenticated'),
+    //         new OA\Response(response: 404, description: 'Symptoms not found'),
+    //     ]
+    // )]
+    public function last_advice()
+    {
+        $advices = auth()->user()->responses()->latest()->first();
         return response()->json([
             "success" => true,
-            "ai_response" => $output,
-            "generated_at" => $now
+            "data" => $advices,
+            "message" => "history have been retrieved"
         ]);
     }
 
-
-
+    // #[OA\Get(
+    //     path: '/ai/history',
+    //     summary: 'Get all symptoms for the authenticated user',
+    //     security: [['sanctum' => []]],
+    //     tags: ['Symptoms'],
+    //     responses: [
+    //         new OA\Response(response: 200, description: 'List of user symptoms'),
+    //         new OA\Response(response: 401, description: 'Unauthenticated'),
+    //         new OA\Response(response: 404, description: 'Symptoms not found'),
+    //     ]
+    // )]
     public function history()
     {
         $advices = auth()->user()->responses()->latest()->get();
