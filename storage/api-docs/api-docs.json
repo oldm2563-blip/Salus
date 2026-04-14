@@ -66,8 +66,7 @@
                                 "properties": {
                                     "appointment_date": {
                                         "type": "string",
-                                        "format": "date",
-                                        "example": "2020-03-12"
+                                        "format": "date"
                                     },
                                     "status": {
                                         "type": "string",
@@ -121,8 +120,7 @@
                                 "properties": {
                                     "appointment_date": {
                                         "type": "string",
-                                        "format": "date",
-                                        "example": "2020-03-12"
+                                        "format": "date"
                                     },
                                     "status": {
                                         "type": "string",

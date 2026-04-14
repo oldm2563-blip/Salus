@@ -56,7 +56,7 @@ class AppointmentController extends Controller
             content: new OA\JsonContent(
                 required: ['appointment_date', 'doctor_id'],
                 properties: [
-                    new OA\Property(property: 'appointment_date', type: 'string', format:'date' , example: '2020-03-12'),
+                    new OA\Property(property: 'appointment_date', type: 'date'),
                     new OA\Property(property: 'status', type: 'string', enum:['pending','confirmed','cancelled'], example: 'pending or confirmed' ),
                     new OA\Property(property: 'doctor_id', type: 'integer' , example: '1'),
                 ],
@@ -141,7 +141,7 @@ class AppointmentController extends Controller
             content: new OA\JsonContent(
                 required: ['appointment_date', 'doctor_id'],
                 properties: [
-                    new OA\Property(property: 'appointment_date', type: 'date', format:'date'),
+                    new OA\Property(property: 'appointment_date', type: 'date'),
                     new OA\Property(property: 'status', type: 'string', enum:['pending','confirmed','cancelled'], example: 'pending or confirmed' ),
                     new OA\Property(property: 'doctor_id', type: 'integer' , example: '1'),
                 ],
