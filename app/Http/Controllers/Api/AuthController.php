@@ -78,6 +78,7 @@ class AuthController extends Controller
             'email' => ['required', 'email'],
             'password' => 'required'
         ]);
+        
         if (Auth::attempt($incomingFields)) {
             $token = auth()->user()->createToken('myToken')->plainTextToken;
             return response()->json([
